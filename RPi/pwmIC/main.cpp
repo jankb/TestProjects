@@ -53,7 +53,7 @@ class GPIO
   private:
     std::map<MODE, std::string> m_modeMap;
 
-    int openFD(const std::string &path)
+    int openFD(const std::string path)
     {
       int fd = open(path.c_str(), O_WRONLY);
       if (fd  == -1)
@@ -61,6 +61,10 @@ class GPIO
         int err = errno;
         printf("Error %d opening %s.\n", err, path.c_str());
       } 
+      else
+      {
+      m_fdMap[fd] = path;
+      }
       return fd;
     }
 
@@ -70,7 +74,7 @@ class GPIO
       if (res  == -1)
       {
         int err = errno;
-        printf("Error %d closing %d.\n", err, fd);
+        printf("Error %d closing %s.\n", err, m_fdMap[fd]);
       } 
       return res;
     }
@@ -78,11 +82,12 @@ class GPIO
     int writeTo(int fd, const std::string &val)
     {
       const char* value = val.c_str();
+      printf("Writing %s to %s\n", value, (m_fdMap[fd]).c_str());
       ssize_t res = write(fd, value, sizeof(value));
       if (res == -1)
       {
         int err = errno;
-        printf("Error %d writing %d to fd %d.\n", err, value, fd);
+        printf("Error %d writing %s to fd %d, %s.\n", err, value, fd, m_fdMap[fd]);
       }
       return res;
     }
@@ -90,7 +95,6 @@ class GPIO
 
     void writeToPath(std::string path, std::string val)
     {
-      std::cout << path <<" " << val << std::endl;
       int fd = openFD(path);
       if (fd != -1)
       {
@@ -106,6 +110,7 @@ class GPIO
     std::string m_pin;
     int m_ValueFD;
     MODE m_direction;
+    std::map<int, std::string> m_fdMap;
 };
 
 
@@ -113,9 +118,9 @@ int main()
 {
   std::cout << "Starting." << std::endl;
   GPIO gpio(13,GPIO::OUT);
-  gpio.turnOn();
+  gpio.turnOff();
   int value;
   std::cin >> value;
-  gpio.turnOff();
+  gpio.turnOn();
   return 0;
 }
