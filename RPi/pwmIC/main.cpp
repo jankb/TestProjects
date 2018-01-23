@@ -6,27 +6,53 @@
 #include <iostream>
 #include <cstdio>
 
+#include <map>
+
 class GPIO
 {
   public:
-    GPIO(unsigned int pin) 
+    enum MODE {
+      IN,
+      OUT
+    };
+
+    GPIO(unsigned int pin, const MODE dir) 
       : m_pin(std::to_string(pin)),
-        m_exportPath("/sys/class/gpio/export"),
-        m_unExportPath("/sys/class/gpio/unexport")
-    {
-      
-      writeToPath(m_exportPath, m_pin);
-    }
+      m_exportPath("/sys/class/gpio/export"),
+      m_unExportPath("/sys/class/gpio/unexport"),
+      m_valuePath("/sys/class/gpio/"),
+      m_direction(dir)
+  {
+    m_modeMap[IN] = "in"; 
+    m_modeMap[OUT] = "out"; 
+    m_valuePath += "gpio"+m_pin+"/value";
+    m_directionPath = "/sys/class/gpio/gpio"+m_pin+"/direction";
+    writeToPath(m_exportPath, m_pin);
+    writeToPath(m_directionPath, m_modeMap[m_direction]);
+  }
+
+
     ~GPIO()
     {
       writeToPath(m_unExportPath, m_pin);
     }
 
-  private:
+   void turnOn()
+    {
+      writeToPath(m_valuePath, "1");
+    }
 
+   void turnOff()
+    {
+      writeToPath(m_valuePath, "0");
+    }
+
+  private:
+    std::map<MODE, std::string> m_modeMap;
 
     void writeToPath(std::string path, std::string val)
     {
+      std::cout << path <<" " << val << std::endl;
       int fd = open(path.c_str(), O_WRONLY);
       if (fd == -1)
       {
@@ -48,13 +74,18 @@ class GPIO
 
     std::string m_exportPath;
     std::string m_unExportPath;
+    std::string m_valuePath;
+    std::string m_directionPath;
     std::string m_pin;
+    MODE m_direction;
 };
 
 
 int main()
 {
   std::cout << "Starting." << std::endl;
-  GPIO gpio(17);
-	return 0;
+  GPIO gpio(13,GPIO::OUT);
+  gpio.turnOn();
+  gpio.turnOff();
+  return 0;
 }
