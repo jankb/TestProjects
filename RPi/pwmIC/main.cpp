@@ -125,6 +125,13 @@ class GPIO : public GPIOIf
     std::map<int, std::string> m_fdMap;
 };
 
+class PWM
+{
+	public:    PWM() {}
+	
+    void start()    {        m_thread = std::thread(&PWM::runnable,this);    }
+private:    void runnable()    {        std::cout << "Starting runnable" << std::endl;    }std::thread m_thread;
+};
 
 int main()
 {
