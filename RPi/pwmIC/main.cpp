@@ -6,6 +6,10 @@
 #include <iostream>
 #include <cstdio>
 
+
+#include <thread>
+#include <chrono>
+
 #include <map>
 
 
@@ -125,12 +129,34 @@ class GPIO : public GPIOIf
     std::map<int, std::string> m_fdMap;
 };
 
-class PWM
-{
-	public:    PWM() {}
-	
-    void start()    {        m_thread = std::thread(&PWM::runnable,this);    }
-private:    void runnable()    {        std::cout << "Starting runnable" << std::endl;    }std::thread m_thread;
+class PWM {
+
+public:
+  PWM(GPIOIf *gpio, unsigned int frequency) 
+  : m_gpio(gpio),
+    m_frequency(frequency) 
+    {}
+  void start()
+  {
+    m_thread = std::thread(&PWM::runnable,this);
+  }
+
+private:
+
+  void runnable()
+  {
+    std::cout << "Starting runnable" << std::endl;
+    while (1)
+    {
+		m_gpio->turnOn();
+		std::this_thread::sleep_for(std::chrono::seconds(1));
+		m_gpio->turnOff();
+	}
+  }
+  
+  std::thread m_thread;
+  GPIOIf *m_gpio;
+  unsigned int m_frequency;
 };
 
 int main()
