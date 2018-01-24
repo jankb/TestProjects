@@ -3,6 +3,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#include "gpio.h"
 #include <iostream>
 #include <cstdio>
 
@@ -12,7 +13,7 @@
 
 #include <map>
 
-
+/*
 class GPIOIf
 {
 	public:
@@ -128,35 +129,47 @@ class GPIO : public GPIOIf
     MODE m_direction;
     std::map<int, std::string> m_fdMap;
 };
+*/
+class PWM 
+{
 
-class PWM {
-
-public:
-  PWM(GPIOIf *gpio, unsigned int frequency) 
-  : m_gpio(gpio),
-    m_frequency(frequency) 
-    {}
-  void start()
-  {
-    m_thread = std::thread(&PWM::runnable,this);
-  }
-
-private:
-
-  void runnable()
-  {
-    std::cout << "Starting runnable" << std::endl;
-    while (1)
+  public:
+    PWM(GPIOIf *gpio, unsigned int frequency, unsigned int dutyCycle) 
+      : m_gpio(gpio),
+      m_frequency(frequency),
+      m_dutyCycle(dutyCycle),
+      m_isRunning(false)
+  {}
+    void start()
     {
-		m_gpio->turnOn();
-		std::this_thread::sleep_for(std::chrono::seconds(1));
-		m_gpio->turnOff();
-	}
-  }
-  
-  std::thread m_thread;
-  GPIOIf *m_gpio;
-  unsigned int m_frequency;
+      m_thread = std::thread(&PWM::runnable,this);
+      m_isRunning = true;
+    }
+
+    void stop()
+    {
+      m_isRunning = false;
+    }
+
+  private:
+
+    void runnable()
+    {
+      std::cout << "Starting runnable." << std::endl;
+      while (m_isRunning)
+      {
+        m_gpio->turnOn();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        m_gpio->turnOff();
+      }
+      std::cout << "Stopped runnable." << std::endl;
+    }
+
+    std::thread m_thread;
+    GPIOIf *m_gpio;
+    unsigned int m_frequency;
+    unsigned int m_dutyCycle;
+    bool m_isRunning;
 };
 
 int main()

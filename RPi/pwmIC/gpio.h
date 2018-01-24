@@ -1,5 +1,5 @@
-#ifndef GPIO_H
-#define GPIO_H
+#ifndef JKB_GPIO_H
+#define JKB_GPIO_H
 
 #include <map>
 #include <iostream>
@@ -25,7 +25,12 @@ class GPIO : public GPIOIf
     void turnOn();
     void turnOff();
 
-private:
+  private:
+    int openFD(const std::string path);
+    int closeFD(int fd);
+    int writeTo(int fd, const std::string &val);
+    void writeToPath(std::string path, std::string val);
+
     std::string m_exportPath;
     std::string m_unExportPath;
     std::string m_valuePath;
@@ -35,4 +40,5 @@ private:
     MODE m_direction;
     std::map<int, std::string> m_fdMap;
     std::map<MODE, std::string> m_modeMap;
+};
 #endif
