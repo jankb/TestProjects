@@ -8,7 +8,15 @@
 
 #include <map>
 
-class GPIO
+
+class GPIOIf
+{
+	public:
+	 virtual void turnOn() = 0;
+	 virtual void turnOff() = 0;
+};
+
+class GPIO : public GPIOIf
 {
   public:
     enum MODE {
@@ -26,6 +34,7 @@ class GPIO
   {
     m_modeMap[IN] = "in"; 
     m_modeMap[OUT] = "out"; 
+    m_fdMap[-1] = "PATH NOT SET";
     m_valuePath += "gpio"+m_pin+"/value";
     m_directionPath = "/sys/class/gpio/gpio"+m_pin+"/direction";
     writeToPath(m_exportPath, m_pin);
@@ -59,7 +68,7 @@ class GPIO
       if (fd  == -1)
       {
         int err = errno;
-        printf("Error %d opening %s.\n", err, path.c_str());
+        std::cerr << "Error " << err << " opening " << path.c_str() << std::endl;
       } 
       else
       {
@@ -74,7 +83,7 @@ class GPIO
       if (res  == -1)
       {
         int err = errno;
-        printf("Error %d closing %s.\n", err, m_fdMap[fd]);
+        std::cerr << "Error " << err << " closing " << m_fdMap[fd] << std::endl;
       } 
       return res;
     }
@@ -82,13 +91,16 @@ class GPIO
     int writeTo(int fd, const std::string &val)
     {
       const char* value = val.c_str();
-      printf("Writing %s to %s\n", value, (m_fdMap[fd]).c_str());
       ssize_t res = write(fd, value, sizeof(value));
       if (res == -1)
       {
         int err = errno;
-        printf("Error %d writing %s to fd %d, %s.\n", err, value, fd, m_fdMap[fd]);
+        std::cerr << "Error " << err << " writing " << value << " to " << m_fdMap[fd] << std::endl;
       }
+      else
+      {
+		std::cout << "Writing " << value << " to " << m_fdMap[fd] << std::endl;
+	  }
       return res;
     }
 
