@@ -7,6 +7,10 @@
 class GPIOIf
 {
 	public:
+	enum MODE {
+      IN,
+      OUT
+    };
 	 virtual void turnOn() = 0;
 	 virtual void turnOff() = 0;
 };
@@ -14,10 +18,7 @@ class GPIOIf
 class GPIO : public GPIOIf
 {
   public:
-    enum MODE {
-      IN,
-      OUT
-    };
+    
 
     GPIO(unsigned int pin, const MODE dir);
     ~GPIO();

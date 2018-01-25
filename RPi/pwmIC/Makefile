@@ -1,11 +1,13 @@
 
-all: pwm
+all: build/pwm
 
-pwm: builddir gpio.o  
-	g++ main.cpp ./build/gpio.o -o ./build/pwm
+.PHONY: all
 
-gpio.o: gpio.cpp gpio.h
-	g++ -I. -c gpio.cpp -o ./build/gpio.o
+build/pwm: build/gpio.o main.cpp | builddir
+	g++ $^ -o $@
+
+build/gpio.o: gpio.cpp gpio.h | builddir
+	g++ -I. -c gpio.cpp -o $@
 
 builddir:
 	mkdir -p build
