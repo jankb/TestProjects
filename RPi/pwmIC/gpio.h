@@ -20,7 +20,9 @@ class GPIO : public GPIOIf
   public:
     
 
-    GPIO(unsigned int pin, const MODE dir);
+    GPIO(unsigned int pin,
+         const MODE dir,
+         bool inverted = false);
     ~GPIO();
 
     void turnOn();
@@ -41,5 +43,10 @@ class GPIO : public GPIOIf
     MODE m_direction;
     std::map<int, std::string> m_fdMap;
     std::map<MODE, std::string> m_modeMap;
+
+    bool m_inverted;
+
+    std::string m_on;
+    std::string m_off;
 };
 #endif

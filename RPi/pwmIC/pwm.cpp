@@ -31,9 +31,11 @@ void PWM::runnable()
   while (m_isRunning)
   {
     m_gpio->turnOn();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(2));
     m_gpio->turnOff();
-    std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    std::this_thread::sleep_for(std::chrono::milliseconds(13));
+
+
   }
   std::cout << "Stopped runnable." << std::endl;
 }

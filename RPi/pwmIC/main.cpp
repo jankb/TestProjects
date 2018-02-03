@@ -5,7 +5,7 @@
 int main()
 {
   std::cout << "Starting." << std::endl;
-  GPIO *gpio = new GPIO(13,GPIO::OUT);
+  GPIO *gpio = new GPIO(13,GPIO::OUT, true);
   PWM pwm(gpio, 50, 50);
   pwm.start();
 //  gpio.turnOff();

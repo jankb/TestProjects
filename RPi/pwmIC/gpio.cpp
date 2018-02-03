@@ -7,13 +7,14 @@
 
 
 
-GPIO::GPIO(unsigned int pin, const MODE dir) 
+GPIO::GPIO(unsigned int pin, const MODE dir, bool inverted)
       : m_pin(std::to_string(pin)),
       m_exportPath("/sys/class/gpio/export"),
       m_unExportPath("/sys/class/gpio/unexport"),
       m_valuePath("/sys/class/gpio/"),
       m_direction(dir),
-      m_ValueFD(-1)
+      m_ValueFD(-1),
+      m_inverted(inverted)
 {
   m_modeMap[IN] = "in"; 
   m_modeMap[OUT] = "out"; 
@@ -23,6 +24,17 @@ GPIO::GPIO(unsigned int pin, const MODE dir)
   writeToPath(m_exportPath, m_pin);
   writeToPath(m_directionPath, m_modeMap[m_direction]);
   m_ValueFD = openFD(m_valuePath);
+
+  if (m_inverted)
+  {
+      m_on  = '0';
+      m_off = '1';
+  }
+  else
+  {
+      m_on  = '1';
+      m_off = '0';
+  }
 }
 
 
@@ -34,12 +46,12 @@ GPIO::~GPIO()
 
 void GPIO::turnOn()
 {
-  writeTo(m_ValueFD, "1");
+  writeTo(m_ValueFD, m_on);
 }
 
 void GPIO::turnOff()
 {
-  writeTo(m_ValueFD, "0");
+  writeTo(m_ValueFD, m_off);
 }
 
 
@@ -80,7 +92,7 @@ int GPIO::writeTo(int fd, const std::string &val)
     }
     else
     {
-      //  std::cout << "Writing " << value << " to " << m_fdMap[fd] << std::endl;
+    //    std::cout << "Writing " << value << " to " << m_fdMap[fd] << std::endl;
     }
     return res;
 }
