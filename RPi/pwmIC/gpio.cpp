@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <cstring>
 #include "gpio.h"
 
 
@@ -48,7 +49,7 @@ int GPIO::openFD(const std::string path)
   if (fd  == -1)
   {
     int err = errno;
-    std::cerr << "Error " << err << " opening " << path.c_str() << std::endl;
+    std::cerr << "Error " << std::strerror(err) << " opening " << path.c_str() << std::endl;
   } 
   else
   {
@@ -63,25 +64,25 @@ int GPIO::closeFD(int fd)
   if (res  == -1)
   {
     int err = errno;
-    std::cerr << "Error " << err << " closing " << m_fdMap[fd] << std::endl;
+    std::cerr << "Error " << std::strerror(err) << " closing " << m_fdMap[fd] << std::endl;
   } 
   return res;
 }
 
 int GPIO::writeTo(int fd, const std::string &val)
 {
-  const char* value = val.c_str();
-  ssize_t res = write(fd, value, sizeof(value));
-  if (res == -1)
-  {
-    int err = errno;
-    std::cerr << "Error " << err << " writing " << value << " to " << m_fdMap[fd] << std::endl;
-  }
-  else
-  {
-    	std::cout << "Writing " << value << " to " << m_fdMap[fd] << std::endl;
-      }
-  return res;
+    const char* value = val.c_str();
+    ssize_t res = write(fd, value, sizeof(value));
+    if (res == -1)
+    {
+        int err = errno;
+        std::cerr << "Error " << std::strerror(err) << " writing " << value << " to " << m_fdMap[fd] << std::endl;
+    }
+    else
+    {
+      //  std::cout << "Writing " << value << " to " << m_fdMap[fd] << std::endl;
+    }
+    return res;
 }
 
 
