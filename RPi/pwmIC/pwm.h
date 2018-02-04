@@ -10,22 +10,31 @@ class PWM
   public:
     PWM(GPIOIf *gpio,
         unsigned int frequency,
-        unsigned int dutyCycle);
+        float dutyCycle);
 
     ~PWM();
 
     void start();
-
     void stop();
+    void setDutyCycle(float dutyCycle);
 
   private:
+
+    struct timing
+             {
+        unsigned on;
+        unsigned off;
+    } m_timing;
 
     void runnable();
 
     std::thread m_thread;
     GPIOIf *m_gpio;
     unsigned int m_frequency;
-    unsigned int m_dutyCycle;
+    float m_dutyCycle;
     bool m_isRunning;
+    unsigned int m_totalTime;
+
+
 };
 #endif // PWM_H
