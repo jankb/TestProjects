@@ -18,7 +18,7 @@ PWM::PWM(GPIOIf *gpio,
 
 PWM::~PWM()
 {
-    m_thread.join();
+
 }
 
 void PWM::start()
@@ -30,6 +30,7 @@ void PWM::start()
 void PWM::stop()
 {
   m_isRunning = false;
+  m_thread.join();
 }
 
 void PWM::setDutyCycle(float dutyCycle)
@@ -51,8 +52,6 @@ void PWM::runnable()
     std::this_thread::sleep_for(std::chrono::milliseconds(m_timing.on));
     m_gpio->turnOff();
     std::this_thread::sleep_for(std::chrono::milliseconds(m_timing.off));
-
-
   }
   std::cout << "Stopped runnable." << std::endl;
 }

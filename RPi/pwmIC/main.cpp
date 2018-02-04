@@ -27,14 +27,16 @@ int main()
 
   while (isRunning)
   {
-      for (float dc = 0.01; dc <= 0.99; dc += 0.01)
+      for (float dc = 0.01; dc <= 0.99; dc += 0.008)
       {
+          if (isRunning == false) break;
           pwm_g.setDutyCycle(dc);
           pwm_b.setDutyCycle(dc*0.10);
           std::this_thread::sleep_for(std::chrono::milliseconds(20));
       }
-      for (float dc = 0.96; dc >= 0.01; dc -= 0.01)
+      for (float dc = 0.96; dc >= 0.01; dc -= 0.008)
       {
+          if (isRunning == false) break;
           pwm_g.setDutyCycle(dc);
           pwm_b.setDutyCycle(dc*0.10);
           std::this_thread::sleep_for(std::chrono::milliseconds(20));
