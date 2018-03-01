@@ -22,18 +22,39 @@ gst-launch-1.0 -vvv udpsrc address=239.192.1.1 port=5005 ! queue ! 'application/
 ## Programming
 ### Serialization
 ```C++
-template <typename T>
+ 
+ template <typename T>
  void serialize(T data)
  { 
-   std::cout << "Serializing : " << data << std::endl;
+   std::cout << data << std::endl;
  }
 
+ template <>
+ void serialize(int* data)
+ { 
+   std::cout << *data << std::endl;
+}
+ 
  template <class C>
  void serialize(std::vector<typename C::value_type> data)
  {
+   std::cout << "std::vector - begin"<<std::endl;
    for (std::vector<C::value_type>::const_iterator cit = data.begin(); cit != data.end(); cit++)
    {
      serialize<C::value_type>(*cit);
    }
+   std::cout << "std::vector - end"<<std::endl;
+ }
+
+ template <class C>
+ void serialize(std::map<typename C::key_type, typename C::mapped_type> data)
+ {
+   std::cout << "std::map - begin"<<std::endl;
+   for (std::map<C::key_type,C::mapped_type>::const_iterator cit = data.begin(); cit != data.end(); cit++)
+   {
+     serialize<C::key_type>(cit->first);
+     serialize<C::mapped_type>(cit->second);
+   }
+   std::cout << "std::map - end"<<std::endl;
  }
  ```
