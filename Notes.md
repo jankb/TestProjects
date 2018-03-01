@@ -17,3 +17,23 @@ cvlc -v smpte.avi --loop --sout '#transcode{vcodec=h264, venc=x264{options={repe
 ```
 gst-launch-1.0 -vvv udpsrc address=239.192.1.1 port=5005 ! queue ! 'application/x-rtp, encoding-name=H264, width=800, height=600, framerate=30' ! rtph264depay ! 'video/x-h264, width=800, height=600, framerate=30' ! h264parse ! 'video/x-h264, stream-format=byte-stream' ! omxh264dec ! queue ! glimagesink sync=false
 ```
+
+
+## Programming
+### Serialization
+```
+template <typename T>
+ void serialize(T data)
+ { 
+   std::cout << "Serializing : " << data << std::endl;
+ }
+
+ template <class C>
+ void serialize(std::vector<typename C::value_type> data)
+ {
+   for (std::vector<C::value_type>::const_iterator cit = data.begin(); cit != data.end(); cit++)
+   {
+     serialize<C::value_type>(*cit);
+   }
+ }
+ ```
