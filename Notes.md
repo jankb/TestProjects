@@ -21,7 +21,7 @@ gst-launch-1.0 -vvv udpsrc address=239.192.1.1 port=5005 ! queue ! 'application/
 
 ## Programming
 ### Serialization
-```
+```C++
 template <typename T>
  void serialize(T data)
  { 
