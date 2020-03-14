@@ -5,13 +5,13 @@
 
 int main()
 {
-  std::map<std::pair<int,int>, std::pair<int,int>> resolutions;
+  std::map<std::pair<int,int>, std::pair<int,int> > resolutions;
   resolutions[std::make_pair(640,480)] = std::make_pair(980,480);
-
-  if (resolutions.find(std::make_pair(640,480)) != resolutions.end())
+  auto it = resolutions.find(std::make_pair(640,480));
+  if (it != resolutions.end())
   {
-    std::cout << "Resolution " << resolutions[std::make_pair(640,480)].first  << "," 
-                               << resolutions[std::make_pair(640,480)].second << std::endl;
+    std::cout << "Resolution " << (*it).second.first  << "," 
+                               << (*it).second.second << std::endl;
   }
   else
   {
