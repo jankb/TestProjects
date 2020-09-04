@@ -6,7 +6,7 @@ libtestlib.so: testlib.cpp
 	g++ -shared -o libtestlib.so testlib.cpp
 
 
-all: $(app) $(libtestlib.so) 
+all: app 
 
 clean:
 	rm libtestlib.so app
