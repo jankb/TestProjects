@@ -34,10 +34,11 @@ rtph264pay ! \
 udpsink host=192.168.1.70 sync=false
 ```
 
-Grab screen using ximagesrc
+Grab screen/application window using ximagesrc
 ```
 #!/bin/bash
-DISPLAY=:0 GST_DEBUG=2 gst-launch-1.0 -vvv ximagesrc use-damage=0 xname='TestJetson (64-bit Development SF_VULKAN_SM5) ' ! \
+#DISPLAY=:0 GST_DEBUG=2 gst-launch-1.0 -vvv ximagesrc use-damage=0 endx=$1 endy=$2 ! \
+DISPLAY=:0 GST_DEBUG=2 gst-launch-1.0 -vvv ximagesrc use-damage=0 xname='xclock' ! \
 'video/x-raw, framerate='$3'/1' ! \
 nvvidconv ! \
 'video/x-raw(memory:NVMM), width='$1', height='$2', format=(string)I420, framerate='$3'/1' ! \
