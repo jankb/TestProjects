@@ -18,3 +18,9 @@ alias.unpushed log --branches --not --remotes
 ```
 C:\Users\<username>\.config\git\git-prompt.sh
 ```
+
+## inode
+https://installati.one/ubuntu/20.04/inotify-tools/
+```
+inotifywait -rm -e modify  --exclude .git/ --exclude .sw[po] .
+```
